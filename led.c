@@ -1,0 +1,56 @@
+//--------------APB2???????------------------------
+#define RCC_AP2ENR	*((unsigned volatile int*)0x40021018)
+	//----------------GPIOA????? ------------------------
+#define GPIOA_CRL	*((unsigned volatile int*)0x40010800)
+#define	GPIOA_ORD	*((unsigned volatile int*)0x4001080C)
+//----------------GPIOB????? ------------------------
+#define GPIOB_CRH	*((unsigned volatile int*)0x40010C04)
+#define	GPIOB_ORD	*((unsigned volatile int*)0x40010C0C)
+//----------------GPIOC????? ------------------------
+#define GPIOC_CRH	*((unsigned volatile int*)0x40011004)
+#define	GPIOC_ORD	*((unsigned volatile int*)0x4001100C)
+//-------------------???????-----------------------
+void  Delay_wxc( volatile  unsigned  int  t)
+{
+     unsigned  int  i;
+     while(t--)
+         for (i=0;i<800;i++);
+}
+//------------------------???--------------------------
+int main()
+{
+	int j=100;
+	RCC_AP2ENR|=1<<2;			//APB2-GPIOA??????
+	RCC_AP2ENR|=1<<3;			//APB2-GPIOB??????	
+	RCC_AP2ENR|=1<<4;			//APB2-GPIOC??????
+	//????????? RCC_APB2ENR|=1<<3|1<<4;
+	GPIOA_CRL&=0xFF0FFFFF;		//??? ??	
+	GPIOA_CRL|=0x00200000;		//PA7????
+	GPIOA_ORD|=1<<5;			//???????
+	
+	GPIOB_CRH&=0xFFFFFF0F;		//??? ??	
+	GPIOB_CRH|=0x00000020;		//PB9????
+	GPIOB_ORD|=1<<9;			//???????
+	
+	GPIOC_CRH&=0xF0FFFFFF;		//??? ??
+	GPIOC_CRH|=0x02000000;   	//PC15????
+	GPIOC_ORD|=0x1<<14;			//???????	
+	while(j)
+	{	
+		GPIOA_ORD=0x0<<5;		//PB0???	
+		Delay_wxc(1000000);
+		GPIOA_ORD=0x1<<5;		//PB0???
+		Delay_wxc(1000000);
+		
+		GPIOB_ORD=0x0<<9;		//PB9???	
+		Delay_wxc(1000000);
+		GPIOB_ORD=0x1<<9;		//PB9???
+		Delay_wxc(1000000);
+		
+		GPIOC_ORD=0x0<<14;		//PC15???	
+		Delay_wxc(1000000);
+		GPIOC_ORD=0x1<<14;		//PC15???
+		Delay_wxc(1000000);
+	}
+}
+void SystemInit(){}
